@@ -2,3 +2,94 @@
 This module contains procedures to display and animate optimizers as they find
 the minimum of a function.
 """
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from matplotlib import cm
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib.animation import FuncAnimation
+
+
+def plot(f, xs, ys, optimizers, frames=50, levels=50):
+    X, Y = np.meshgrid(xs, ys)
+
+    print(X.shape)
+    print(Y.shape)
+
+    Z = np.array(
+        [f(np.array(v), False) for v in zip(X.flatten(), Y.flatten())]
+    ).reshape(X.shape)
+
+    fig = plt.figure(figsize=plt.figaspect(0.5))
+    ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+    ax2 = fig.add_subplot(1, 2, 2)
+
+    ax1.plot_surface(
+        X, Y, Z, cmap=cm.coolwarm, linewidth=0, antialiased=True
+    )
+    ax1.set_xlim3d((xs.min(), xs.max()))
+    ax1.set_ylim3d((ys.min(), ys.max()))
+    ax1.set_zlim3d((0, 100.0))
+
+    ax2.contour(X, Y, Z, levels, cmap=cm.coolwarm)
+    ax2.set_xlim((xs.min(), xs.max()))
+    ax2.set_ylim((ys.min(), ys.max()))
+
+    data_points = np.zeros((frames, len(optimizers), 3))
+
+    for i in range(frames):
+        for (j, opti) in enumerate(optimizers):
+            data_points[i, j, :] = (
+                opti.state[0],
+                opti.state[1],
+                f(opti.state, False)
+            )
+            opti.step()
+
+    opti_paths1 = [
+        ax1.plot([], [], [], zorder=5, label=opti.name)[0] for opti in optimizers
+    ]
+    opti_paths2 = [
+        ax2.plot([], [], zorder=5, label=opti.name)[0] for opti in optimizers
+    ]
+
+    ax1.legend()
+
+    def update(frame, data_points, opti_paths1, opti_paths2):
+        print(frame)
+        for i in range(len(opti_paths1)):
+            opti_paths1[i].set_data(
+                data_points[:frame, i, 0].flatten(),
+                data_points[:frame, i, 1].flatten(),
+            )
+            opti_paths1[i].set_3d_properties(
+                data_points[:frame, i, 2].flatten()
+            )
+            opti_paths2[i].set_data(
+                data_points[:frame, i, 0].flatten(),
+                data_points[:frame, i, 1].flatten(),
+            )
+
+        return opti_paths1 + opti_paths2
+
+    ani = FuncAnimation(
+        fig, update, frames=frames, fargs=(data_points, opti_paths1, opti_paths2),
+        blit=False
+    )
+
+    return ani
+
+
+if __name__ == '__main__':
+    from test_functions import sphere
+    from optimizers import Optimizer
+
+    def test_mode(opti):
+        return opti.state * 0.5
+
+    optimizers = [
+        Optimizer("test", test_mode, sphere, np.array((4.0, 4.0))),
+    ]
+
+    plot(sphere, np.linspace(-5, 5, 20), np.linspace(-5, 5, 20), optimizers)

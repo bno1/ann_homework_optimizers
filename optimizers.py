@@ -7,7 +7,8 @@ lr = 0.001
 
 
 class Optimizer:
-    def __init__(self, mode, f, start_pos):
+    def __init__(self, name, mode, f, start_pos):
+        self.name = name
         # function to minimize
         self.f = f
         # starting position for finding the minimum
@@ -15,12 +16,11 @@ class Optimizer:
         # optimizing mode, one of the below functions
         self.mode = mode
         # v and s start at (0,0)
-        self.v = (0,0)
-        self.s = (0,0)
+        self.v = (0, 0)
+        self.s = (0, 0)
 
     def step(self):
-        return self.mode(self)
-
+        self.state = self.mode(self)
 
 
 def SGD(optimizer):
@@ -48,7 +48,7 @@ def RMSProp(optimizer, beta=0.1, eps=10**(-8)):
     state = optimizer.state
     g = optimizer.f(state, derivative=True)
     optimizer.s = (1 - beta) * optimizer.s + beta * g*g
-    new_state = state - lr * g / (sqrt(s) + eps)
+    new_state = state - lr * g / (sqrt(optimizer.s) + eps)
     return new_state
 
 
