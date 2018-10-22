@@ -18,8 +18,10 @@ class Optimizer:
         # v and s start at (0,0)
         self.v = np.array([0, 0])
         self.s = np.array([0, 0])
+        self.steps = 0
 
     def step(self):
+        self.steps += 1
         self.state = self.mode(self)
 
 
@@ -40,7 +42,6 @@ def NesterovMomentum(optimizer, miu=0.9):
     f = optimizer.f
     state = optimizer.state
 
-    ev = lr * f(state, derivative=True)
     optimizer.v = miu * v + lr * f(state, derivative=True)
     new_state = state - optimizer.v
     return new_state
@@ -63,8 +64,8 @@ def Adam(optimizer, eps=10**(-8), beta1=0.9, beta2=0.999):
     optimizer.v = beta1 * v + (1. - beta1) * g
     optimizer.s = beta2 * s + (1. - beta2) * g*g
 
-    v_unbiased = v / (1. - beta1)
-    s_unbiased = s / (1. - beta2)
+    v_unbiased = v / (1. - beta1 ** optimizer.steps)
+    s_unbiased = s / (1. - beta2 ** optimizer.steps)
 
     new_state = state - lr * v_unbiased / (np.sqrt(s_unbiased) + eps)
     return new_state
