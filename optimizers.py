@@ -51,7 +51,7 @@ def RMSProp(optimizer, beta=0.1, eps=10**(-8)):
     state = optimizer.state
     g = optimizer.f(state, derivative=True)
     optimizer.s = (1 - beta) * optimizer.s + beta * g*g
-    new_state = state - lr * g / (np.sqrt(np.asarray(optimizer.s)) + eps)
+    new_state = state - lr * g / (np.sqrt(optimizer.s) + eps)
     return new_state
 
 

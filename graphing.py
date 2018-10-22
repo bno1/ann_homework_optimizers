@@ -50,11 +50,11 @@ def plot(f, xs, ys, optimizers, frames=50, levels=50):
     cmap = cm.Dark2
 
     opti_paths1 = [
-        ax1.plot([], [], [], '-', zorder=5, label=opti.name, color=cmap(c))[0]
+        ax1.plot([], [], [], '-o', zorder=5, label=opti.name, color=cmap(c), markevery=[0, -1])[0]
         for (c, opti) in zip(np.linspace(0, 1, len(optimizers)), optimizers)
     ]
     opti_paths2 = [
-        ax2.plot([], [], '-', zorder=5, label=opti.name, color=cmap(c))[0]
+        ax2.plot([], [], '-o', zorder=5, label=opti.name, color=cmap(c), markevery=[0, -1])[0]
         for (c, opti) in zip(np.linspace(0, 1, len(optimizers)), optimizers)
     ]
 
