@@ -22,6 +22,7 @@ def sphere(state, derivative=False):
 
 
 # Recommended range: [-1; 1]x[-1; 1]
+# minimum at (1, 1) (== (A, A^2))
 def rosenbrock(state, derivative=False):
     A = 1.0
     B = 50
@@ -39,6 +40,7 @@ def rosenbrock(state, derivative=False):
 
 
 # Recommended range: [-2; 2]x[-2; 2]
+# minimum at (0, 0)
 def rastrigin(state, derivative=False):
     A = 10.0
     TWO_PI = np.pi * 2
@@ -50,6 +52,7 @@ def rastrigin(state, derivative=False):
 
 
 # This function is just horrible
+# minimum at (0. 0)
 def griewank(state, derivative=False):
     F = 1.0 / 4000.0
     CF = np.array((1, np.sqrt(2) / 2))

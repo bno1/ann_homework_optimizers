@@ -14,9 +14,6 @@ from matplotlib.animation import FuncAnimation
 def plot(f, xs, ys, optimizers, frames=50, levels=50):
     X, Y = np.meshgrid(xs, ys)
 
-    print(X.shape)
-    print(Y.shape)
-
     Z = np.array(
         [f(np.array(v), False) for v in zip(X.flatten(), Y.flatten())]
     ).reshape(X.shape)
@@ -61,7 +58,6 @@ def plot(f, xs, ys, optimizers, frames=50, levels=50):
     ax1.legend()
 
     def update(frame, data_points, opti_paths1, opti_paths2):
-        print(frame)
         for i in range(len(opti_paths1)):
             opti_paths1[i].set_data(
                 data_points[:frame, i, 0].flatten(),
