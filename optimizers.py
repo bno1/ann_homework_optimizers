@@ -67,7 +67,7 @@ def AdaGrad(optimizer):
     optimizer.grad_sq += grad * grad
     
     # Delta 
-    delta = - optimizer.lr * grad / np.sqrt(grad_sq + optimizer.eps)
+    delta = - optimizer.lr * grad / np.sqrt(optimizer.grad_sq + optimizer.eps)
     
     # New State 
     new_state = optimizer.state + delta
