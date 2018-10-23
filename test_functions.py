@@ -65,3 +65,13 @@ def saddle(state, derivative=False):
         return 2 * state * [1.0, -1.0]
     else:
         return np.dot(state * state, [1.0, -1.0])
+
+
+def monkey_saddle(state, derivative=False):
+    x = float(state[0])
+    y = float(state[1])
+
+    if derivative:
+        return np.array([3*x**2 - 3*y**2, -6*y], dtype=np.float32)
+    else:
+        return float(x**3 - 3*x*y**2)
