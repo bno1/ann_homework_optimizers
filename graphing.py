@@ -27,7 +27,7 @@ def plot(f, xs, ys, optimizers, frames=50, levels=50, steps_per_frame=1):
     )
     ax1.set_xlim3d((xs.min(), xs.max()))
     ax1.set_ylim3d((ys.min(), ys.max()))
-    ax1.set_zlim3d((0, 100.0))
+    # ax1.set_zlim3d((0, 100.0))
 
     ax2.contour(X, Y, Z, levels, cmap=cm.coolwarm)
     ax2.set_xlim((xs.min(), xs.max()))
