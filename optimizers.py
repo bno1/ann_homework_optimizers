@@ -33,20 +33,44 @@ class Optimizer:
         self.beta2 = beta2
         self.eps = eps
 
+        # for adagrad
+        self.grad_sq = 0
+        
     def step(self):
         self.steps += 1
         self.state = self.mode(self)
 
 
 def SGD(optimizer):
-    # TODO
-    new_state = optimizer.state
+    
+    # State
+    state = optimizer.state
+    
+    # Gradient
+    grad = optimizer.f(state, derivative=True)
+        
+    # New State 
+    new_state = state - optimizer.lr * grad
+    
     return new_state
 
 
 def AdaGrad(optimizer):
-    # TODO
-    new_state = optimizer.state
+    
+    # State
+    state = optimizer.state
+    
+    # Gradient
+    grad = optimizer.f(state, derivative=True)
+    
+    # Squared Gradient
+    optimizer.grad_sq += grad * grad
+    
+    # Delta 
+    delta = - optimizer.lr * grad / np.sqrt(grad_sq + optimizer.eps)
+    
+    # New State 
+    new_state = optimizer.state + delta
     return new_state
 
 
