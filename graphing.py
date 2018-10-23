@@ -11,7 +11,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.animation import FuncAnimation
 
 
-def plot(f, xs, ys, optimizers, frames=50, levels=50):
+def plot(f, xs, ys, optimizers, frames=50, levels=50, steps_per_frame=1):
     X, Y = np.meshgrid(xs, ys)
 
     Z = np.array(
@@ -33,15 +33,16 @@ def plot(f, xs, ys, optimizers, frames=50, levels=50):
     ax2.set_xlim((xs.min(), xs.max()))
     ax2.set_ylim((ys.min(), ys.max()))
 
-    data_points = np.zeros((frames, len(optimizers), 3))
+    data_points = np.zeros((frames * steps_per_frame, len(optimizers), 3))
 
-    for i in range(frames):
+    for i in range(frames * steps_per_frame):
         for (j, opti) in enumerate(optimizers):
             data_points[i, j, :] = (
                 opti.state[0],
                 opti.state[1],
                 f(opti.state, False)
             )
+
             opti.step()
 
     cmap = cm.Dark2
@@ -58,17 +59,19 @@ def plot(f, xs, ys, optimizers, frames=50, levels=50):
     ax1.legend()
 
     def update(frame, data_points, opti_paths1, opti_paths2):
+        n = frame * steps_per_frame
+
         for i in range(len(opti_paths1)):
             opti_paths1[i].set_data(
-                data_points[:frame, i, 0].flatten(),
-                data_points[:frame, i, 1].flatten(),
+                data_points[:n, i, 0].flatten(),
+                data_points[:n, i, 1].flatten(),
             )
             opti_paths1[i].set_3d_properties(
-                data_points[:frame, i, 2].flatten()
+                data_points[:n, i, 2].flatten()
             )
             opti_paths2[i].set_data(
-                data_points[:frame, i, 0].flatten(),
-                data_points[:frame, i, 1].flatten(),
+                data_points[:n, i, 0].flatten(),
+                data_points[:n, i, 1].flatten(),
             )
 
         return opti_paths1 + opti_paths2
@@ -79,17 +82,3 @@ def plot(f, xs, ys, optimizers, frames=50, levels=50):
     )
 
     return ani
-
-
-if __name__ == '__main__':
-    from test_functions import sphere
-    from optimizers import Optimizer
-
-    def test_mode(opti):
-        return opti.state * 0.5
-
-    optimizers = [
-        Optimizer("test", test_mode, sphere, np.array((4.0, 4.0))),
-    ]
-
-    plot(sphere, np.linspace(-5, 5, 20), np.linspace(-5, 5, 20), optimizers)

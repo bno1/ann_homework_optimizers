@@ -16,8 +16,8 @@ class Optimizer:
         # optimizing mode, one of the below functions
         self.mode = mode
         # v and s start at (0,0)
-        self.v = np.array([0, 0])
-        self.s = np.array([0, 0])
+        self.v = np.array([0.0, 0.0])
+        self.s = np.array([0.0, 0.0])
         self.steps = 0
 
         self.lr = lr
@@ -33,44 +33,41 @@ class Optimizer:
         self.beta2 = beta2
         self.eps = eps
 
-        # for adagrad
-        self.grad_sq = 0
-        
     def step(self):
         self.steps += 1
         self.state = self.mode(self)
 
 
-def SGD(optimizer):
-    
+def SGD(opt):
+
     # State
-    state = optimizer.state
-    
+    state = opt.state
+
     # Gradient
-    grad = optimizer.f(state, derivative=True)
-        
-    # New State 
-    new_state = state - optimizer.lr * grad
-    
+    grad = opt.f(state, derivative=True)
+
+    # New State
+    new_state = state - opt.lr * grad
+
     return new_state
 
 
-def AdaGrad(optimizer):
-    
+def AdaGrad(opt):
+
     # State
-    state = optimizer.state
-    
+    state = opt.state
+
     # Gradient
-    grad = optimizer.f(state, derivative=True)
-    
+    grad = opt.f(state, derivative=True)
+
     # Squared Gradient
-    optimizer.grad_sq += grad * grad
-    
-    # Delta 
-    delta = - optimizer.lr * grad / np.sqrt(optimizer.grad_sq + optimizer.eps)
-    
-    # New State 
-    new_state = optimizer.state + delta
+    opt.s += grad * grad
+
+    # Delta
+    delta = - opt.lr * grad / np.sqrt(opt.s + opt.eps)
+
+    # New State
+    new_state = opt.state + delta
     return new_state
 
 
@@ -88,7 +85,7 @@ def RMSProp(opti):
     state = opti.state
     g = opti.f(state, derivative=True)
     opti.s = (1 - opti.beta) * opti.s + opti.beta * g*g
-    new_state = state - opti.lr * g / (np.sqrt(opti.s) + opti.eps)
+    new_state = state - opti.lr * g / np.sqrt(opti.s + opti.eps)
     return new_state
 
 
@@ -104,5 +101,5 @@ def Adam(opti):
     v_unbiased = v / (1. - opti.beta1 ** opti.steps)
     s_unbiased = s / (1. - opti.beta2 ** opti.steps)
 
-    new_state = state - opti.lr * v_unbiased / (np.sqrt(s_unbiased) + opti.eps)
+    new_state = state - opti.lr * v_unbiased / np.sqrt(s_unbiased + opti.eps)
     return new_state

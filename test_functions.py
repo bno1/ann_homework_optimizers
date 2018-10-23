@@ -52,7 +52,7 @@ def rastrigin(state, derivative=False):
 
 
 # This function is just horrible
-# minimum at (0. 0)
+# minimum at (0, 0)
 def griewank(state, derivative=False):
     F = 1.0 / 4000.0
     CF = np.array((1, np.sqrt(2) / 2))
