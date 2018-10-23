@@ -75,3 +75,29 @@ def monkey_saddle(state, derivative=False):
         return np.array([3*x**2 - 3*y**2, -6*y], dtype=np.float32)
     else:
         return float(x**3 - 3*x*y**2)
+
+
+def hyperbolic_paraboloid(state, derivative=True):
+    x = float(state[0])
+    y = float(state[1])
+
+    a = 10
+    b = 5
+
+    if derivative:
+        return np.array([-2.*x /a**2, 2*y/b**2])
+    else:
+        return 1./b**2 * y**2 - 1./a**2 * x**2
+
+
+
+def himmelblau(state, derivative=True):
+    x = state[0]
+    y = state[1]
+
+    if derivative:
+        dx = 2 * (x**2 + y - 11) * 2*x + 2*(x + y**2 - 7)
+        dy = 2 * (x**2 + y - 11) + 2*(x + y**2 - 7) * 2*y
+        return np.array([dx,dy])
+    else:
+        return (x**2 + y - 11)**2 + (x + y**2 - 7)**2
