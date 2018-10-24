@@ -45,7 +45,7 @@ def plot(f, xs, ys, optimizers, frames=50, levels=50, steps_per_frame=1):
 
             opti.step()
 
-    cmap = cm.Dark2
+    cmap = cm.Accent
 
     opti_paths1 = [
         ax1.plot([], [], [], '-o', zorder=5, label=opti.name, color=cmap(c), markevery=[0, -1])[0]
